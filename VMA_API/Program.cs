@@ -1,4 +1,7 @@
+using System.Threading.Channels;
 using VMA_API.Application.Middleware;
+using VMA_API.Application.Workers;
+using VMA_API.Domain.Model;
 using VMA_API.Domain.Service;
 using VMA_API.Domain.Service.Interface;
 using VMA_API.Infra.DataAcess.Connection;
@@ -13,10 +16,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IExcelImportService, ExcelImportService>();
-builder.Services.AddScoped<IExcelImportRepository, ExcelImportRepository>();
+builder.Services.AddTransient<IExcelImportService, ExcelImportService>();
+builder.Services.AddTransient<IExcelImportRepository, ExcelImportRepository>();
 
-builder.Services.AddScoped<DbSession>();
+// Adiciona o HostedService (Worker)
+builder.Services.AddHostedService<ImportWorker>();
+
+// Adiciona o Channel para comunicação
+builder.Services.AddSingleton(Channel.CreateUnbounded<ExcelInfo>());
+
+builder.Services.AddTransient<DbSession>();
 
 var app = builder.Build();
 

@@ -2,6 +2,6 @@
 {
     public interface IExcelImportService
     {
-        void SaveImport(IFormFile file);
+        void ProcessExcelFile(MemoryStream stream, string tableName);
     }
 }

@@ -1,24 +1,20 @@
-﻿using NPOI.SS.UserModel;
+﻿using Microsoft.Extensions.Logging;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
+using VMA_API.Application.Middleware;
 using VMA_API.Domain.Service.Interface;
 using VMA_API.Infra.DataAcess.Repository;
 
 namespace VMA_API.Domain.Service
 {
-    public class ExcelImportService(IExcelImportRepository repository) : IExcelImportService
+    public class ExcelImportService(IExcelImportRepository repository, ILogger<ExcelImportService> logger) : IExcelImportService
     {
         private readonly IExcelImportRepository _repository = repository;
+        private readonly ILogger<ExcelImportService> _logger = logger;
 
-        public void SaveImport(IFormFile file)
+        public void ProcessExcelFile(MemoryStream stream, string tableName) 
         {
-            ProcessExcelFile(file, "InfoValidacao");
-        }
-
-        private void ProcessExcelFile(IFormFile file, string tableName) 
-        {
-            using var stream = new MemoryStream();
-            file.CopyTo(stream);
             stream.Position = 0;
 
             // Carrega o arquivo Excel
@@ -36,7 +32,6 @@ namespace VMA_API.Domain.Service
                 // Iterar pelas linhas do chunk atual
                 while(count < chunkSize)
                 {
-                    //var teste = Math.Min(currentRow + chunkSize, totalRows + 1);
                     IRow rowData = sheet.GetRow(currentRow);
                     if (rowData != null)
                     {
@@ -63,10 +58,12 @@ namespace VMA_API.Domain.Service
                     }
                 }
                 _repository.BulkInsertToDatabase(dataTable, tableName);
+                _logger.LogInformation($"Inseridos {dataTable.Rows.Count} registros na tabela {tableName}");
                 dataTable.Rows.Clear();
                 count = 0;
             }
-           
+            _logger.LogInformation($"Inseridos {totalRows} registros na tabela {tableName} no total.");
+
         }
     }
     
