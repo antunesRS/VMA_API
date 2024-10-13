@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMA_API", "VMA_API\VMA_API.csproj", "{4587B98B-A911-4FBF-9065-36C3129A688E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4587B98B-A911-4FBF-9065-36C3129A688E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4587B98B-A911-4FBF-9065-36C3129A688E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4587B98B-A911-4FBF-9065-36C3129A688E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4587B98B-A911-4FBF-9065-36C3129A688E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {620B97B7-BCDC-4775-867F-C1E3A6B8D134}
+	EndGlobalSection
+EndGlobal
