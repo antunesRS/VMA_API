@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.SignalR;
 using System.Threading.Channels;
 using VMA_API.Application.Middleware;
+using VMA_API.Application.ProgressUpdate;
 using VMA_API.Application.Workers;
 using VMA_API.Domain.Model;
 using VMA_API.Domain.Service;
@@ -24,10 +26,14 @@ builder.Services.AddHostedService<ImportWorker>();
 
 // Adiciona o Channel para comunicação
 builder.Services.AddSingleton(Channel.CreateUnbounded<ExcelInfo>());
-
 builder.Services.AddTransient<DbSession>();
 
+builder.Services.AddSignalR();
+
+
 var app = builder.Build();
+
+app.UseRouting();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -43,5 +49,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ImportHub>("/hub");
 
 app.Run();

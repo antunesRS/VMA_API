@@ -1,24 +1,28 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.SignalR;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using VMA_API.Application.Middleware;
+using VMA_API.Application.ProgressUpdate;
 using VMA_API.Domain.Service.Interface;
 using VMA_API.Infra.DataAcess.Repository;
 
 namespace VMA_API.Domain.Service
 {
-    public class ExcelImportService(IExcelImportRepository repository, ILogger<ExcelImportService> logger) : IExcelImportService
+    public class ExcelImportService(IExcelImportRepository repository, 
+                                    ILogger<ExcelImportService> logger,
+                                    ImportHub hubContext) : IExcelImportService
     {
         private readonly IExcelImportRepository _repository = repository;
         private readonly ILogger<ExcelImportService> _logger = logger;
+        private readonly ImportHub _hubContext = hubContext;
 
-        public void ProcessExcelFile(MemoryStream stream, string tableName) 
+        public async void ProcessExcelFile(MemoryStream stream, string tableName) 
         {
             stream.Position = 0;
 
             // Carrega o arquivo Excel
-            IWorkbook workbook = new XSSFWorkbook(stream);
+            XSSFWorkbook workbook = new(stream);
             ISheet sheet = workbook.GetSheetAt(0);
 
             int chunkSize = 5; // Define o tamanho do bloco (chunk)
@@ -27,7 +31,7 @@ namespace VMA_API.Domain.Service
             int count = 0;
             DataTable dataTable = new();
 
-            while(currentRow <= totalRows)
+            while (currentRow <= totalRows)
             {
                 // Iterar pelas linhas do chunk atual
                 while(count < chunkSize)
@@ -55,6 +59,10 @@ namespace VMA_API.Domain.Service
                             count++;
                         }
                         currentRow++;
+                        int processedRows = Math.Min(currentRow + chunkSize, totalRows);
+                        int percentage = (processedRows * 100) / totalRows;
+
+                        await _hubContext.SendProgress(percentage);
                     }
                 }
                 _repository.BulkInsertToDatabase(dataTable, tableName);
