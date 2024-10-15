@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using VMA_API.Application.ProgressUpdate;
+using VMA_API.Application.Hubs;
 using VMA_API.Domain.Service.Interface;
 using VMA_API.Infra.DataAcess.Repository;
 
@@ -11,11 +10,11 @@ namespace VMA_API.Domain.Service
 {
     public class ExcelImportService(IExcelImportRepository repository, 
                                     ILogger<ExcelImportService> logger,
-                                    ImportHub hubContext) : IExcelImportService
+                                    IHubContext<ImportHub> hubContext) : IExcelImportService
     {
         private readonly IExcelImportRepository _repository = repository;
         private readonly ILogger<ExcelImportService> _logger = logger;
-        private readonly ImportHub _hubContext = hubContext;
+        private readonly IHubContext<ImportHub> _hubContext = hubContext;
 
         public async void ProcessExcelFile(MemoryStream stream, string tableName) 
         {
@@ -57,12 +56,11 @@ namespace VMA_API.Domain.Service
                         {
                             dataTable.Rows.Add(dataRow);
                             count++;
+                            int percentage = (currentRow * 100) / totalRows;
+                            await _hubContext.Clients.All.SendAsync($"{tableName} - ReceiveProgress", percentage);
+                            _logger.LogInformation(percentage.ToString());
                         }
                         currentRow++;
-                        int processedRows = Math.Min(currentRow + chunkSize, totalRows);
-                        int percentage = (processedRows * 100) / totalRows;
-
-                        await _hubContext.SendProgress(percentage);
                     }
                 }
                 _repository.BulkInsertToDatabase(dataTable, tableName);
