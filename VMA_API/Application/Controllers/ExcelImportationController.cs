@@ -11,9 +11,9 @@ namespace VMA_API.Application.Controllers
         private readonly Channel<ExcelInfo> _channel = channel;
 
         [HttpPost]
-        public async Task<IActionResult> ImportExcel(IFormFile file)
+        public async Task<IActionResult> ImportExcel([FromForm] IFormFile file, [FromForm] string arquivoId)
         {
-            await _channel.Writer.WriteAsync(new ExcelInfo(file));
+            await _channel.Writer.WriteAsync(new ExcelInfo(file, arquivoId));
             return Ok("Planilha enviada para processamento.");
         }
     }

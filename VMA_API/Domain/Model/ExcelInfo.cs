@@ -6,11 +6,13 @@ namespace VMA_API.Domain.Model
     {
         public MemoryStream Stream { get; set; } = new MemoryStream();
         public string FileName { get; set; }
+        public string Id { get; set; } = string.Empty;
 
-        public ExcelInfo(IFormFile file)
+        public ExcelInfo(IFormFile file, string id)
         {
             file.CopyTo(Stream);
             FileName = file.FileName.Replace(".xlsx","");
+            Id = id;
         }
     }
 }

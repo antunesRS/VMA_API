@@ -16,7 +16,7 @@ namespace VMA_API.Domain.Service
         private readonly ILogger<ExcelImportService> _logger = logger;
         private readonly IHubContext<ImportHub> _hubContext = hubContext;
 
-        public async void ProcessExcelFile(MemoryStream stream, string tableName) 
+        public async void ProcessExcelFile(MemoryStream stream, string tableName, string arquivoId) 
         {
             stream.Position = 0;
 
@@ -57,7 +57,8 @@ namespace VMA_API.Domain.Service
                             dataTable.Rows.Add(dataRow);
                             count++;
                             int percentage = (currentRow * 100) / totalRows;
-                            await _hubContext.Clients.All.SendAsync($"{tableName} - ReceiveProgress", percentage);
+                            Task.Delay(4000).Wait();
+                            await _hubContext.Clients.All.SendAsync("UpdateProgress", arquivoId, percentage);
                             _logger.LogInformation(percentage.ToString());
                         }
                         currentRow++;

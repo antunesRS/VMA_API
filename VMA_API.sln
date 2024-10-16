@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VMA_API", "VMA_API\VMA_API.csproj", "{4587B98B-A911-4FBF-9065-36C3129A688E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMA_Client", "VMA_Client\VMA_Client.csproj", "{11F0FA2D-432E-4B08-BD30-1449AA6F0645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VMA_Client", "VMA_Client\VMA_Client.csproj", "{11F0FA2D-432E-4B08-BD30-1449AA6F0645}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

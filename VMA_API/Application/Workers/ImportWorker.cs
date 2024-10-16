@@ -21,9 +21,11 @@ namespace VMA_API.Application.Workers
             {
                 _logger.LogInformation("Iniciando o processamento...");
 
-                _service.ProcessExcelFile(excelInfo.Stream, excelInfo.FileName);
+                _ = Task.Run(() => _service.ProcessExcelFile(excelInfo.Stream, excelInfo.FileName, excelInfo.Id), stoppingToken);
 
                 _logger.LogInformation("Processamento da planilha concluído.");
+
+                await Task.Delay(1000, stoppingToken);
             }
         }
     }
