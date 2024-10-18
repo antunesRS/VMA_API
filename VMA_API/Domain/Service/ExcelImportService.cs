@@ -24,7 +24,7 @@ namespace VMA_API.Domain.Service
             XSSFWorkbook workbook = new(stream);
             ISheet sheet = workbook.GetSheetAt(0);
 
-            int chunkSize = 5; // Define o tamanho do bloco (chunk)
+            int chunkSize = 10000; // Define o tamanho do bloco (chunk)
             int totalRows = sheet.LastRowNum; // Pega o número total de linhas
             int currentRow = 0;
             int count = 0;
@@ -33,7 +33,7 @@ namespace VMA_API.Domain.Service
             while (currentRow <= totalRows)
             {
                 // Iterar pelas linhas do chunk atual
-                while(count < chunkSize)
+                while(count < chunkSize && count < totalRows)
                 {
                     IRow rowData = sheet.GetRow(currentRow);
                     if (rowData != null)
@@ -57,7 +57,6 @@ namespace VMA_API.Domain.Service
                             dataTable.Rows.Add(dataRow);
                             count++;
                             int percentage = (currentRow * 100) / totalRows;
-                            Task.Delay(4000).Wait();
                             await _hubContext.Clients.All.SendAsync("UpdateProgress", arquivoId, percentage);
                             _logger.LogInformation(percentage.ToString());
                         }
